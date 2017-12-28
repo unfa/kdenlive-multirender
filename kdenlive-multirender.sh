@@ -28,9 +28,8 @@ for i in $(seq -w 01 $PARTS); do # for each thread...
     if [[ "$PART" == "$PARTS" ]]; then # if this is the last thread
         OUT2=$OUT # use the global last frame for this thread (the last thread usually has to render a few frames more, compensating for division errors)
     else # otherwise
-        OUT2=$(echo "(($OUT - $IN) / $PARTS ) * $PART -1" | bc) # calculate the last frame fro this thread
+        OUT2=$(echo "(($OUT - $IN) / $PARTS ) * $PART -1" | bc) # calculate the last frame for this thread
     fi
-    
     
     TB=$(echo $TARGET | cut -d. -f1) # slice out the basename of the output file
     TE=$(echo $TARGET | cut -d. -f2) # slice out the filename extension
