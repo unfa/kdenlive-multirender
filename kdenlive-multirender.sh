@@ -13,9 +13,11 @@ PARTS=$2 # The second passed parameter is the number of threads to use.
 
 IN=$(grep -o " in=[0-9]* "  "$INPUT" | cut -d= -f2 | xargs) # Get the first frame for the project
 OUT=$(grep -o " out=[0-9]* "  "$INPUT" | cut -d= -f2 | xargs) # Get the last frame for the project
+PATHRAW=$(grep -o "TARGET_0=.*"  "$INPUT") # Identify the target file path
+PATHFILE=$(dirname "${PATHRAW}" | sed -e 's/TARGET_0="file:\/\///g' ) # Get the clean file path
 TARGET=$(grep -o "TARGET_0=.*"  "$INPUT" | rev | cut -d/ -f1 | rev | cut -d'"' -f1) # Get the output video file for this project
 
-echo "IN=$IN OUT=$OUT" # verify we gto it right
+echo "IN=$IN OUT=$OUT" # verify we got it right
 
 rm list.txt # clear the list.txt file
 
@@ -40,7 +42,7 @@ for i in $(seq -w 01 $PARTS); do # for each thread...
     
     sed -e "s/in=$IN/in=$IN2/" "$INPUT" | sed -e "s/out=$OUT/out=$OUT2/" | sed -e "s/$TARGET/$TARGET2/" > "$PART.sh" # replace the IN, OUT and TARGET information in the source Kdenlicve render script and write that to a new shell script
     
-    echo "file '$TARGET2'" >> list.txt # add a line to out concatenation list.txt file for ffmpeg to use later
+    echo "file '$PATHFILE/$TARGET2'" >> list.txt # add a line to out concatenation list.txt file for ffmpeg to use later
     
     bash "$PART.sh" & # run the newly created script in the background
     echo
@@ -50,6 +52,6 @@ wait # wait until all rendering threads finish
 
 echo "Concatenating files..."
 
-ffmpeg -f concat -i list.txt -c copy "$TARGET" # merge the individual files into one
+ffmpeg -f concat -safe 0 -i list.txt -c copy "$TARGET" # merge the individual files into one
 
 echo "All done!"
