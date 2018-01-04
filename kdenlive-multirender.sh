@@ -59,6 +59,6 @@ wait # wait until all rendering threads finish
 
 echo "Concatenating files..."
 
-ffmpeg -f concat -safe 0 -i list.txt -c copy "$TARGET" # merge the individual files into one
+ffmpeg -f concat -safe 0 -i list.txt -c copy "$(urldecode $PATHFILE/$TARGET)" # merge the individual files into one
 
 echo "All done!"
