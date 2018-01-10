@@ -18,7 +18,7 @@ A solution to this is to render out multiplechunks of the project at once and co
 
 The script will use the original Kdenlive rendering script to create multiple other scripts and run them in parallel. Then it will use ffmpeg to concatenate the partial files into single video file. The first parameter is the script filename, the second parameter is the amount of threads you want to use.
 
-On my Ryzen 7 1700 machine with 16 GB of RAM, a complex 45-minute video saturates my CPU at 6 threads. YRMV - do not try using a ridiculous amount of threads unless you have a ridiculous amount of RAM, or you can fill your RAM and SWAP and just kill your system. Also note that disk I/O will become a bottleneck at some point, because each thread reads different data and writes different data.
+On my Ryzen 7 1700 machine with 16 GB of RAM, a complex 45-minute video saturates my CPU at 6 threads. YMMV - do not try using a ridiculous amount of threads unless you have a ridiculous amount of RAM, or you can fill your RAM and SWAP and just kill your system. Also note that disk I/O might become a bottleneck at some point, because each thread reads different data and writes different data to disk.
 
 ## Final words
 This is a quick-and dirty script, if you want to use it or improve it - feel free to do so, but don't blame me if it doens't work or it destroys your data. I made it, becasue I needed it and I wanted to share it with the world, becasue others might want it too. the script will leave all temporary files in place after it's done, so you'll have all your partial renders and scripts that made them still there. That's not a problem, they will be overwritten if you re-run the script.
