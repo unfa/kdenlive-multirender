@@ -14,9 +14,9 @@ A solution to this is to render out multiplechunks of the project at once and co
 2. Copy __kdenlive-multirender.sh__ into the same directory
 3. Run it:
       
-      $ bash ./kdenlive-multirender.sh Kdenlive-render-script.sh 6
+      $ bash ./kdenlive-multirender.sh Kdenlive-render-script.sh 16 4
 
-The script will use the original Kdenlive rendering script to create multiple other scripts and run them in parallel. Then it will use ffmpeg to concatenate the partial files into single video file. The first parameter is the script filename, the second parameter is the amount of threads you want to use.
+The script will use the original Kdenlive rendering script to create multiple other scripts and run few of them in parallel. Then it will use ffmpeg to concatenate the partial files into single video file. The first parameter is the script filename, the second one is the amount of parts to split the job into, and the third parameter is the amount of threads you want to process in parallel.
 
 On my Ryzen 7 1700 machine with 16 GB of RAM, a complex 45-minute video saturates my CPU at 6 threads. YMMV - do not try using a ridiculous amount of threads unless you have a ridiculous amount of RAM, or you can fill your RAM and SWAP and just kill your system. Also note that disk I/O might become a bottleneck at some point, because each thread reads different data and writes different data to disk.
 
