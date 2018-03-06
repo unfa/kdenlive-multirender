@@ -69,7 +69,7 @@ for i in $(seq -w 01 $PARTS); do # for each part...
     done
     
     echo "Starting thread $i"
-    bash "kmr-$PART.sh" & # run another scrpt in the background
+    bash "kmr-$i.sh" & # run another scrpt in the background
     echo
 done
 
