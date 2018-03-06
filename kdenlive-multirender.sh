@@ -17,6 +17,14 @@ PATHRAW=$(grep -o "TARGET_0=.*"  "$INPUT") # Identify the target file path
 PATHFILE=$(dirname "${PATHRAW}" | sed -e 's/TARGET_0="file:\/\///g' ) # Get the clean file path
 TARGET=$(grep -o "TARGET_0=.*"  "$INPUT" | rev | cut -d/ -f1 | rev | cut -d'"' -f1) # Get the output video file for this project
 
+#ffmpeg can't read urlencoded paths
+urldecode() {
+    # urldecode <string>
+
+    local url_encoded="${1//+/ }"
+    printf '%b' "${url_encoded//%/\\x}"
+}
+
 echo "IN=$IN OUT=$OUT" # verify we got it right
 
 rm list.txt # clear the list.txt file
@@ -41,7 +49,7 @@ for i in $(seq -w 01 $PARTS); do # for each thread...
     
     sed -e "s/in=$IN/in=$IN2/" "$INPUT" | sed -e "s/out=$OUT/out=$OUT2/" | sed -e "s/$TARGET/$TARGET2/" > "$PART.sh" # replace the IN, OUT and TARGET information in the source Kdenlicve render script and write that to a new shell script
     
-    echo "file '$PATHFILE/$TARGET2'" >> list.txt # add a line to out concatenation list.txt file for ffmpeg to use later
+    echo "file '$(urldecode $PATHFILE/$TARGET2)'" >> list.txt # add a line to out concatenation list.txt file for ffmpeg to use later
     
     bash "$PART.sh" & # run the newly created script in the background
     echo
@@ -51,6 +59,6 @@ wait # wait until all rendering threads finish
 
 echo "Concatenating files..."
 
-ffmpeg -f concat -safe 0 -i list.txt -c copy "$TARGET" # merge the individual files into one
+ffmpeg -f concat -safe 0 -i list.txt -c copy "$(urldecode $PATHFILE/$TARGET)" # merge the individual files into one
 
 echo "All done!"
