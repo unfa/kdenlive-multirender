@@ -36,15 +36,44 @@ rm kmr-list.txt # clear the kmr-list.txt file
 
 ### Prepare individual rendering scripts for each part
 
+breakpoints_mode=FALSE
+if ! [[ "$PARTS" =~ ^[0-9]+$ ]]; then
+	breakpoints_mode=TRUE
+	partsnumber=1
+	parts_starts[partsnumber]=0
+	echo "Parts was not integer so breakpoints mode is used"
+	filename="$PARTS"
+	while read -r line
+	do
+		numba="$line"
+		echo "Read from file: $numba"
+		parts_ends[partsnumber]=$numba
+		partsnumber=$((partsnumber + 1))
+		parts_starts[partsnumber]=$((numba+1))
+	done < "$filename"
+	parts_ends[partsnumber]=$OUT
+	echo "there will be $partsnumber parts"
+	echo ${parts_starts[@]}
+	echo ${parts_ends[@]}
+	PARTS=$partsnumber
+fi
+
+
 for i in $(seq -w 01 $PARTS); do # for each part...
     
     PART=$i
-    IN2=$(echo "(($OUT - $IN) / $PARTS ) * ($PART - 1)" | bc) # calculate the thread start frame
-    if [[ "$PART" == "$PARTS" ]]; then # if this is the last thread
-        OUT2=$OUT # use the global last frame for this thread (the last thread usually has to render a few frames more, compensating for division errors)
-    else # otherwise
-        OUT2=$(echo "(($OUT - $IN) / $PARTS ) * $PART -1" | bc) # calculate the last frame for this thread
-    fi
+
+    if [[ "breakpoints_mode"==TRUE ]]; then
+		IN2=${parts_starts[$i]}
+		OUT2=${parts_ends[$i]}
+	else
+		IN2=$(echo "(($OUT - $IN) / $PARTS ) * ($PART - 1)" | bc) # calculate the thread start frame
+		if [[ "$PART" == "$PARTS" ]]; then # if this is the last thread
+		    OUT2=$OUT # use the global last frame for this thread (the last thread usually has to render a few frames more, compensating for division errors)
+		else # otherwise
+		    OUT2=$(echo "(($OUT - $IN) / $PARTS ) * $PART -1" | bc) # calculate the last frame for this thread
+		fi
+	fi
     
     TB=$(echo $TARGET | cut -d. -f1) # slice out the basename of the output file
     TE=$(echo $TARGET | cut -d. -f2) # slice out the filename extension
@@ -55,7 +84,7 @@ for i in $(seq -w 01 $PARTS); do # for each part...
     echo 
     
     sed -e "s/in=$IN/in=$IN2/" "$INPUT" | sed -e "s/out=$OUT/out=$OUT2/" | sed -e "s/$TARGET/$TARGET2/" > "kmr-$PART.sh" # replace the IN, OUT and TARGET information in the source Kdenlicve render script and write that to a new shell script
-    
+
     echo "file '$(urldecode $PATHFILE/$TARGET2)'" >> kmr-list.txt # add a line to out concatenation list.txt file for ffmpeg to use later
 done
 
