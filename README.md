@@ -20,6 +20,11 @@ The script will use the original Kdenlive rendering script to create multiple ot
 
 On my Ryzen 7 1700 machine with 16 GB of RAM, a complex 45-minute video saturates my CPU at 6 threads. YMMV - do not try using a ridiculous amount of threads unless you have a ridiculous amount of RAM, or you can fill your RAM and SWAP and just kill your system. Also note that disk I/O might become a bottleneck at some point, because each thread reads different data and writes different data to disk.
 
+## Breakpoint mode by Intercode
+When trying out this script for music videos I have found that while it is a wonderful time saver, the action of splitting in multiple small videos and sticking togheter after will create audible cuts in the music. For this reason I have added the breakpoints mode to the script. The breakpoints mode allows you to tell the script where to cut the video. Simply create a txt file with a list of frames where the video can be cut, 1 per line, dont put the frame 0 and the last frame, just the frame numbers where the video can be cut. Then simply replace the parts number (the second argument) by the name of the file where you put the list of breakpoints.
+
+Example: bash ./kdenlive-multirender.sh jampack_001.sh jampack_breakpoints.txt 4
+
 ## Final words
 This is a quick-and dirty script, if you want to use it or improve it - feel free to do so, but don't blame me if it doens't work or it destroys your data. I made it, becasue I needed it and I wanted to share it with the world, becasue others might want it too. the script will leave all temporary files in place after it's done, so you'll have all your partial renders and scripts that made them still there. That's not a problem, they will be overwritten if you re-run the script.
 
