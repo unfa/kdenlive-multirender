@@ -58,14 +58,15 @@ if ! [[ "$PARTS" =~ ^[0-9]+$ ]]; then
 	PARTS=$partsnumber
 fi
 
-
+partsnumber=1
 for i in $(seq -w 01 $PARTS); do # for each part...
     
     PART=$i
 
     if [[ "breakpoints_mode"==TRUE ]]; then
-		IN2=${parts_starts[$i]}
-		OUT2=${parts_ends[$i]}
+		IN2=${parts_starts[$partsnumber]}
+		OUT2=${parts_ends[$partsnumber]}
+		partsnumber=$((partsnumber + 1))
 	else
 		IN2=$(echo "(($OUT - $IN) / $PARTS ) * ($PART - 1)" | bc) # calculate the thread start frame
 		if [[ "$PART" == "$PARTS" ]]; then # if this is the last thread
@@ -87,6 +88,7 @@ for i in $(seq -w 01 $PARTS); do # for each part...
 
     echo "file '$(urldecode $PATHFILE/$TARGET2)'" >> kmr-list.txt # add a line to out concatenation list.txt file for ffmpeg to use later
 done
+
 
 ### exeute the script, maintining no more than $THREADS  concurrent processes
 
