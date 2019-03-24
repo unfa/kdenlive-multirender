@@ -1,11 +1,14 @@
 # WARNING!
 I am no longer using Kdenlive for my video work.
+
 I'm using Olive instead: https://www.olivevideoeditor.org/
+
 If you wonder why I decided to switch, watch this video: https://youtu.be/ym1brc2OcYQ
 
 Becasue of that I am no longer insterested in develping this script. If anyone wants to take it over - let me know.
+
 My advice - don't hurt yourself with Kdenlive and use Olive instead.
-You'll thank me ater.
+You'll thank me later.
 
 # kdenlive-multirender
 A Bash script enabling multi-threaded video rendering for Kdenlive.
